@@ -50,8 +50,7 @@ terraform-build:
     - terraform plan
 
   rules:
-    - if: $CI_MERGE_REQUEST_TAR
-    GET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - changes:
         paths: 
         - iac-docker//*
