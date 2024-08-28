@@ -22,18 +22,34 @@ before_script:
   - apk add zip
   - apk add make
 
-
 build:
   script:
-    - cd DAAC
+    - cd daac
     - python3 -m venv .venv
     - source .venv/bin/activate
     - pip install -r requirements.txt
     - make html
     - cd build
+    - zip -r html.zip html
   artifacts:
     paths:
-      - zip -r html.zip html
+      - daac/build/html.zip
   rules:
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
- 
+    - changes:
+        paths: 
+        - daac//*
+
+terraform-build:
+  stage: test
+  script:
+    - cd iac-docker
+    - terraform init
+    - terraform validate
+    - terraform plan
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - changes:
+        paths: 
+        - iac-docker//*
+        - flask-docker//*
