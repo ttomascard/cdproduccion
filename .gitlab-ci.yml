@@ -16,14 +16,12 @@ variables:
 cache:
   paths:
     - .cache/pip
-
-before_script:
-  - python --version ; pip --version  # For debugging
-  - apk add zip
-  - apk add make
-
-build:
+  
+build-daac:
   script:
+    - python --version ; pip --version  # For debugging
+    - apk add zip
+    - apk add make
     - cd daac
     - python3 -m venv .venv
     - source .venv/bin/activate
@@ -41,14 +39,19 @@ build:
         - daac//*
 
 terraform-build:
+  image: hashicorp/terraform:1.9.5
+  services: 
+    - docker:24.0.5-dind
   stage: test
   script:
     - cd iac-docker
     - terraform init
     - terraform validate
     - terraform plan
+
   rules:
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_TAR
+    GET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - changes:
         paths: 
         - iac-docker//*
