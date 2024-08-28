@@ -22,7 +22,7 @@ build-daac:
     - python --version ; pip --version  # For debugging
     - apk add zip
     - apk add make
-    - cd daac
+    - cd DAAC
     - python3 -m venv .venv
     - source .venv/bin/activate
     - pip install -r requirements.txt
@@ -31,12 +31,12 @@ build-daac:
     - zip -r html.zip html
   artifacts:
     paths:
-      - daac/build/html.zip
+      - DAAC/build/html.zip
   rules:
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - changes:
         paths: 
-        - daac//*
+        - DAAC//*
 
 terraform-build:
   image: hashicorp/terraform:1.9.5
