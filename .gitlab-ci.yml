@@ -93,3 +93,6 @@ terraform-apply:
         paths: 
         - iac-docker/**/*
         - flask-docker/**/*
+
+
+
