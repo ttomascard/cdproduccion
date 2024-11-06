@@ -35,7 +35,7 @@ build-DAAC:
       - DAAC/build/html.zip
   rules: 
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - changes: 
+      changes: 
         paths: 
         - DAAC/**/*
 
@@ -60,7 +60,7 @@ terraform-build:
     - terraform show --json ${CI_PROJECT_DIR}/plan.json
   rules: 
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - changes: 
+      changes: 
         paths: 
         - iac-docker/**/*
         - flask-docker/**/*
@@ -89,10 +89,62 @@ terraform-apply:
     - terraform apply -auto-approve
   rules: 
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - changes: 
+      changes: 
         paths: 
         - iac-docker/**/*
         - flask-docker/**/*
 
+terraform-build-101:
+  image: ubuntu:24.04
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  stage: test
+  script:
+    - apt-get update && apt-get install -y gnupg software-properties-common wget gpg coreutils gnupg software-properties-common
+    - wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    - gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+    - echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+    - apt update -y && apt install -y terraform
+    - terraform --version
+    - cd iac-modelo-101
+    - terraform init
+    - terraform plan -out=${CI_PROJECT_DIR}/plan.json
+    - terraform show --json ${CI_PROJECT_DIR}/plan.json
+  rules: 
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes: 
+        paths: 
+        - iac-modelo-101/**/*
+  artifacts:
+    reports:
+      terraform: plan.json
 
+
+terraform-apply-101:
+  image: ubuntu:24.04
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  stage: deploy
+  script:
+    - apt-get update && apt-get install -y gnupg software-properties-common wget gpg coreutils gnupg software-properties-common
+    - wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    - gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+    - echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+    - apt update -y && apt install -y terraform
+    - terraform --version
+    - cd iac-modelo-101
+    - terraform init
+    - terraform apply -auto-approve
+  rules: 
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes: 
+        paths: 
+        - iac-modelo-101/**/*
+        - flask-docker/**/*
 
