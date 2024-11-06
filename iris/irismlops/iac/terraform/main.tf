@@ -1,14 +1,27 @@
-# main.tf
-
-provider "aws" {
-  region = var.aws_region
+# Configure the Microsoft Azure Provider
+provider "azurerm" {
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
-resource "aws_s3_bucket" "data_bucket" {
-  bucket = var.bucket_name
-  acl    = "private"
+locals {
+  common_tags = {
+    environment = var.environment
+    project = "iris"
+    owner  = "tomas.cardona@upb.edu.co"
+  }
+  prefix = "tom"
+  resource_group_name = "dsproduccion202402"
 }
 
-output "bucket_name" {
-  value = aws_s3_bucket.data_bucket.id
+resource "azurerm_storage_account" "function_storage_account" {
+  name                     = "${local.prefix}${var.environment}functionstorage"
+  resource_group_name      = local.resource_group_name
+  location                 = var.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  tags = local.common_tags
 }
