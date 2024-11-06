@@ -17,11 +17,11 @@ locals {
   resource_group_name = "dsproduccion202402"
 }
 
-resource "azurerm_storage_account" "function_storage_account" {
-  name                     = "${local.prefix}${var.environment}upbfunc"
-  resource_group_name      = local.resource_group_name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  tags = local.common_tags
-}
+# resource "azurerm_storage_account" "function_storage_account" {
+#   name                     = "${local.prefix}${var.environment}upbfunc"
+#   resource_group_name      = local.resource_group_name
+#   location                 = var.location
+#   account_tier             = "Standard"
+#   account_replication_type = "LRS"
+#   tags = local.common_tags
+# }
