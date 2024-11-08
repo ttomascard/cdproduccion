@@ -17,13 +17,13 @@ cache:
   paths:
     - .cache/pip
 
-build-DAAC:
+build-daac:
   stage: test
   script:
     - python --version ; pip --version  # For debugging
     - apk add zip
     - apk add make
-    - cd DAAC
+    - cd daac
     - python3 -m venv .venv
     - source .venv/bin/activate
     - pip install -r requirements.txt
@@ -32,12 +32,12 @@ build-DAAC:
     - zip -r html.zip html
   artifacts:
     paths:
-      - DAAC/build/html.zip
+      - daac/build/html.zip
   rules: 
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       changes: 
         paths: 
-        - DAAC/**/*
+        - daac/**/*
 
 terraform-build:
   image: ubuntu:24.04
@@ -122,7 +122,6 @@ terraform-build-101:
     reports:
       terraform: plan.json
 
-
 terraform-apply-101:
   image: ubuntu:24.04
   services:
@@ -146,7 +145,6 @@ terraform-apply-101:
       changes: 
         paths: 
         - iac-modelo-101/**/*
-        - flask-docker/**/*
 
 terraform-build-iris:
   image: ubuntu:24.04
@@ -176,7 +174,6 @@ terraform-build-iris:
     reports:
       terraform: plan.json
 
-
 terraform-apply-iris:
   image: ubuntu:24.04
   services:
@@ -200,6 +197,3 @@ terraform-apply-iris:
       changes: 
         paths: 
         - iris/irismlops/iac/terraform/**/*
-       
-
-
