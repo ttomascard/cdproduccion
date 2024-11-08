@@ -1,14 +1,14 @@
 variable "location" {
+  type        = string
   description = "The location of the resource group"
-  type        = string
-  
 }
+
 variable "environment" {
-  description = "The environment of the resource group"
   type        = string
+  description = "The environment of the resource group"
 }
 
 variable "backend_image_name" {
-  description = "The name of the backend image"
   type        = string
+  description = "The backend imagen name"
 }
