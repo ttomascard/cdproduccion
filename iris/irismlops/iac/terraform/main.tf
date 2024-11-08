@@ -37,3 +37,20 @@ resource "azurerm_container_registry" "iris" {
   tags                = local.common_tags
 }
 
+# build the docker image
+resource "docker_image" "backend_image" {
+  name = var.backed_imagen_name
+  build {
+    context    = "../../"
+    dockerfile = "iac/docker/backend/Dockerfile"
+    tag        = ["${azurerm_container_registry.iris.login_server}/${var.backed_imagen_name}"]
+    platform = "linux/amd64"
+  }
+  provisioner "local-exec" {
+    command = "docker login ${azurerm_container_registry.iris.login_server} -u ${azurerm_container_registry.iris.admin_username} -p ${azurerm_container_registry.iris.admin_password}"
+  }
+
+  provisioner "local-exec" {
+    command = "docker push ${azurerm_container_registry.iris.login_server}/${var.backed_imagen_name}"
+  }
+}
