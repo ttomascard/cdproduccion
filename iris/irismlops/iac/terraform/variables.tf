@@ -17,3 +17,9 @@ variable "frontend_imagen_name" {
   type        = string
   description = "The frontend imagen name"
 }
+
+
+variable "backend_function_imagen_name" {
+  type        = string
+  description = "The frontend imagen name"
+}

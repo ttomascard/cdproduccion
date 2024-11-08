@@ -20,7 +20,7 @@ locals {
 }
 
 resource "azurerm_container_registry" "iris" {
-  name                = "${local.prefix}${var.environment}iris"
+  name                = "${local.prefix}${var.environment}irisacr"
   resource_group_name = local.resource_group_name
   location            = var.location
   sku                 = "Basic"
@@ -43,6 +43,22 @@ resource "docker_image" "backend_image" {
 
   provisioner "local-exec" {
     command = "docker push ${azurerm_container_registry.iris.login_server}/${var.backend_image_name}"
+  }
+}
+
+resource "docker_image" "backend_fn" {
+  name = var.backend_image_name
+  build {
+    context    = "../../"
+    dockerfile = "iac/docker/backend-fn/Dockerfile"
+    tag        = ["${azurerm_container_registry.iris.login_server}/${var.backend_function_imagen_name}"]
+    platform = "linux/amd64"
+  }
+  provisioner "local-exec" {
+    command = "docker login ${azurerm_container_registry.iris.login_server} -u ${azurerm_container_registry.iris.admin_username} -p ${azurerm_container_registry.iris.admin_password}"
+  }
+  provisioner "local-exec" {
+    command = "docker push ${azurerm_container_registry.iris.login_server}/${var.backend_function_imagen_name}"
   }
 }
 
@@ -114,7 +130,7 @@ resource "azurerm_container_app" "backend_container_app" {
 
   template {
     container {
-      name   = "irismodelo"
+      name   = "backend"
       image  = "${azurerm_container_registry.iris.login_server}/${var.backend_image_name}"
       cpu    = 0.25
       memory = "0.5Gi" 
@@ -124,7 +140,40 @@ resource "azurerm_container_app" "backend_container_app" {
   ingress {
     target_port = 8080
     external_enabled = true
-
+    traffic_weight {
+      percentage = 100
+      latest_revision = true
+    }
+  }
+}
+# Create the Azure Container App
+resource "azurerm_container_app" "backend_function_container_app" {
+  name                         = "${local.prefix}-${var.environment}-iris-be-function-app"
+  resource_group_name          = local.resource_group_name
+  container_app_environment_id = azurerm_container_app_environment.iris-container-app-environment.id
+  revision_mode                = "Single"
+  tags                         = local.common_tags
+  identity {
+    type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.container_app_identity.id]
+  }
+  registry {
+    server   = azurerm_container_registry.iris.login_server
+    identity = azurerm_user_assigned_identity.container_app_identity.id
+  }
+  template {
+    container {
+      name   = "backend-function"
+      image  = "${azurerm_container_registry.iris.login_server}/${var.backend_function_imagen_name}"
+      cpu    = 0.25
+      memory = "0.5Gi"
+    }
+    max_replicas = 1
+    min_replicas = 0
+  }
+  ingress {
+    target_port = 80
+    external_enabled = true
     traffic_weight {
       percentage = 100
       latest_revision = true
