@@ -37,13 +37,3 @@ resource "azurerm_container_registry" "iris" {
   tags                = local.common_tags
 }
 
-# build the docker image
-resource "docker_image" "backend_image" {
-  name = "${azurerm_container_registry.iris.login_server}/backend_image:latest"
-  build {
-    context    = "/../../"
-    dockerfile = "iac/docker/backend/Dockerfile"
-  }
-}
-
-

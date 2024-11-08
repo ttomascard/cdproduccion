@@ -1,4 +1,4 @@
-FROM python:3.9 AS builder
+FROM python:3.10-slim AS builder
 WORKDIR /app
 COPY backend/requirements.txt /app
 RUN pip3 install -r requirements.txt
