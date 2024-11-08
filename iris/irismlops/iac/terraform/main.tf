@@ -39,11 +39,11 @@ resource "azurerm_container_registry" "iris" {
 
 # build the docker image
 resource "docker_image" "backend_image" {
-  name = var.backed_imagen_name
+  name = var.backend_imagen_name
   build {
     context    = "../../"
     dockerfile = "iac/docker/backend/Dockerfile"
-    tag        = ["${azurerm_container_registry.iris.login_server}/${var.backed_imagen_name}"]
+    tag        = ["${azurerm_container_registry.iris.login_server}/${var.backend_imagen_name}"]
     platform = "linux/amd64"
   }
   provisioner "local-exec" {
