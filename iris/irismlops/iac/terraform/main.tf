@@ -55,6 +55,23 @@ resource "docker_image" "backend_image" {
   }
 }
 
+resource "docker_image" "frontend_image" {
+  name = var.backend_image_name
+  build {
+    context    = "../../"
+    dockerfile = "iac/docker/frontend/Dockerfile"
+    tag        = ["${azurerm_container_registry.iris.login_server}/${var.frontend_imagen_name}"]
+    platform = "linux/amd64"
+  }
+  provisioner "local-exec" {
+    command = "docker login ${azurerm_container_registry.iris.login_server} -u ${azurerm_container_registry.iris.admin_username} -p ${azurerm_container_registry.iris.admin_password}"
+  }
+
+  provisioner "local-exec" {
+    command = "docker push ${azurerm_container_registry.iris.login_server}/${var.frontend_imagen_name}"
+  }
+}
+
 # create a container app Log Analytics Workspace
 resource "azurerm_log_analytics_workspace" "log-analytics-ws" {
   name                = "${local.prefix}-${var.environment}-iris-log-analytics"
