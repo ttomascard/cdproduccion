@@ -4,10 +4,19 @@ This folder contains Jupyter Notebooks used for various stages of the project, i
 
 ## Notebooks
 
-- **data_exploration.ipynb**: Used to explore the raw data, generate visualizations, and perform initial analysis.
-- **data_preprocessing.ipynb**: Prepares raw data for model training, including cleaning, encoding, and feature engineering.
-- **model_training.ipynb**: Trains machine learning models on processed data, evaluates performance, and generates reports.
+- **0_Eda.ipynb**: Exploratory data analysis
+- **1_modeling**: For modeling
 
+## Prepare development environment
+
+1. Create python virtual environment
+
+
+```bash
+  $ python3 -m venv .venv
+  $ source .venv/bin/activate
+  $ pip install -r requirements.txt
+```
 ## Usage
 
 - Open the notebooks in Jupyter Lab or Notebook by running:
