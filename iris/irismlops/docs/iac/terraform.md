@@ -6,10 +6,12 @@ This document explains the use of Terraform for provisioning cloud infrastructur
 
 - **main.tf**: Contains the primary Terraform configuration, defining cloud resources like servers, databases, etc.
 - **variables.tf**: Defines input variables that can be passed to the configuration to customize the deployment.
-- **outputs.tf**: Contains output variables, such as server IP addresses, that are printed after deployment.
+- **backend.tf**: Contains the Azure backend connection configuration.
 
 ### Running Terraform
 
+1. Copy the terraform-vars.example file and save it as terraform.tfvars
+1. Modify variable values on the terraform.tfvars file
 1. Initialize Terraform:
 
 ```bash

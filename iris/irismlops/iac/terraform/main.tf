@@ -25,3 +25,14 @@ resource "azurerm_storage_account" "function_storage_account" {
   account_replication_type = "LRS"
   tags = local.common_tags
 }
+
+resource "azurerm_container_registry" "iris" {
+  name                = "${local.prefix}${var.environment}iris"
+  resource_group_name = local.resource_group_name
+  location            = var.location
+  sku                 = "Basic"
+  admin_enabled       = true
+  tags                = local.common_tags
+}
+
+
