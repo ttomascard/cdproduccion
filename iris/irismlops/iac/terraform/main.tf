@@ -19,15 +19,6 @@ locals {
   resource_group_name = "dsproduccion202402"
 }
 
-resource "azurerm_storage_account" "function_storage_account" {
-  name                     = "${local.prefix}${var.environment}functionstorage"
-  resource_group_name      = local.resource_group_name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  tags = local.common_tags
-}
-
 resource "azurerm_container_registry" "iris" {
   name                = "${local.prefix}${var.environment}iris"
   resource_group_name = local.resource_group_name
@@ -81,24 +72,104 @@ resource "azurerm_log_analytics_workspace" "log-analytics-ws" {
   tags                = local.common_tags
 }
 
-# # create a container app environment
-# resource "azurerm_container_app_environment" "backend-container-app-environment" {
-#   name                       = "${local.prefix}-${var.environment}-iris-app-environment"
-#   location                   = var.location
-#   resource_group_name        = local.resource_group_name
-#   log_analytics_workspace_id = azurerm_log_analytics_workspace.log-analytics-ws.id
-#   tags                       = local.common_tags
-# }
+# create a container app environment
+resource "azurerm_container_app_environment" "iris-container-app-environment" {
+  name                       = "${local.prefix}-${var.environment}-iris-app-environment"
+  location                   = var.location
+  resource_group_name        = local.resource_group_name
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log-analytics-ws.id
+  tags                       = local.common_tags
+}
 
 resource "azurerm_user_assigned_identity" "container_app_identity" {
   name                = "${local.prefix}-${var.environment}-container-app-identity"
   resource_group_name = local.resource_group_name
   location            = var.location
 }
- 
+
 # Asignar el rol 'AcrPull' a la identidad administrada para el ACR
 resource "azurerm_role_assignment" "acr_pull_role" {
   principal_id   = azurerm_user_assigned_identity.container_app_identity.principal_id
   role_definition_name = "AcrPull"
   scope          = azurerm_container_registry.iris.id
+}
+
+# Create the Azure Container App
+resource "azurerm_container_app" "backend_container_app" {
+  name                         = "${local.prefix}-${var.environment}-iris-be-app"
+  resource_group_name          = local.resource_group_name
+  container_app_environment_id = azurerm_container_app_environment.iris-container-app-environment.id
+  revision_mode                = "Single"
+  tags                         = local.common_tags
+
+  identity {
+    type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.container_app_identity.id]
+  }
+
+  registry {
+    server   = azurerm_container_registry.iris.login_server
+    identity = azurerm_user_assigned_identity.container_app_identity.id
+  }
+
+  template {
+    container {
+      name   = "irismodelo"
+      image  = "${azurerm_container_registry.iris.login_server}/${var.backend_image_name}"
+      cpu    = 0.25
+      memory = "0.5Gi" 
+    }
+    max_replicas = 1
+  }
+  ingress {
+    target_port = 8080
+    external_enabled = true
+
+    traffic_weight {
+      percentage = 100
+      latest_revision = true
+    }
+  }
+}
+
+resource "azurerm_container_app" "frontend_container_app" {
+  name                         = "${local.prefix}-${var.environment}-iris-fe-app"
+  resource_group_name          = local.resource_group_name
+  container_app_environment_id = azurerm_container_app_environment.iris-container-app-environment.id
+  revision_mode                = "Single"
+  tags                         = local.common_tags
+
+  identity {
+    type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.container_app_identity.id]
+  }
+
+  registry {
+    server   = azurerm_container_registry.iris.login_server
+    identity = azurerm_user_assigned_identity.container_app_identity.id
+  }
+
+  template {
+    container {
+      name   = "irisfrontend"
+      image  = "${azurerm_container_registry.iris.login_server}/${var.frontend_imagen_name}"
+      cpu    = 0.25
+      memory = "0.5Gi" 
+
+      env {
+        name  = "PREDICTION_SERVER_URL"
+        value = "https://${azurerm_container_app.backend_container_app.latest_revision_fqdn}" # Apunta al backend
+      }
+    }
+    max_replicas = 1
+  }
+  ingress {
+    target_port = 8501
+    external_enabled = true
+
+    traffic_weight {
+      percentage = 100
+      latest_revision = true
+    }
+  }
 }
