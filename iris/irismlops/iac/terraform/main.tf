@@ -51,6 +51,6 @@ resource "docker_image" "backend_image" {
   }
 
   provisioner "local-exec" {
-    command = "docker push ${azurerm_container_registry.iris.login_server}/${var.backed_imagen_name}"
+    command = "docker push ${azurerm_container_registry.iris.login_server}/${var.backend_image_name}"
   }
 }
