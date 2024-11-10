@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copiar el archivo de requerimientos y el código de la aplicación
 COPY frontend-fn/requirements.txt .
-COPY frontend-fn/app.py .
+COPY frontend-fn/function_app.py .
 
 # Instalar las dependencias de la aplicación
 RUN pip install --no-cache-dir -r requirements.txt
