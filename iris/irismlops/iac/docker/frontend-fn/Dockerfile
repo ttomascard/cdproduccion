@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copiar el archivo de requerimientos y el código de la aplicación
 COPY frontend-fn/requirements.txt .
-COPY frontend-fn/function_app.py .
+COPY frontend-fn/app.py .
 
 # Instalar las dependencias de la aplicación
 RUN pip install --no-cache-dir -r requirements.txt
@@ -18,4 +18,4 @@ EXPOSE 8501
 ENV PYTHONUNBUFFERED=1
 
 # Comando para ejecutar la aplicación Streamlit
-CMD ["streamlit", "run", "function_app.py", "--server.enableCORS", "false", "--server.port", "8501"]
+CMD ["streamlit", "run", "app.py", "--server.enableCORS", "false", "--server.port", "8501"]
