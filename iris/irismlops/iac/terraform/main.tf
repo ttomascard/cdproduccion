@@ -62,6 +62,23 @@ resource "docker_image" "backend_fn" {
   }
 }
 
+resource "docker_image" "frontend_fn" {
+  name = var.backend_image_name
+  build {
+    context    = "../../"
+    dockerfile = "iac/docker/frontend-fn/Dockerfile"
+    tag        = ["${azurerm_container_registry.iris.login_server}/${var.frontend_function_imagen_name}"]
+    platform = "linux/amd64"
+  }
+  provisioner "local-exec" {
+    command = "docker login ${azurerm_container_registry.iris.login_server} -u ${azurerm_container_registry.iris.admin_username} -p ${azurerm_container_registry.iris.admin_password}"
+  }
+
+  provisioner "local-exec" {
+    command = "docker push ${azurerm_container_registry.iris.login_server}/${var.frontend_function_imagen_name}"
+  }
+}
+
 resource "docker_image" "frontend_image" {
   name = var.backend_image_name
   build {
@@ -173,6 +190,41 @@ resource "azurerm_container_app" "backend_function_container_app" {
   }
   ingress {
     target_port = 80
+    external_enabled = true
+    traffic_weight {
+      percentage = 100
+      latest_revision = true
+    }
+  }
+}
+
+# Create the Azure Container App
+resource "azurerm_container_app" "frontend_function_container_app" {
+  name                         = "${local.prefix}-${var.environment}-iris-fe-function-app"
+  resource_group_name          = local.resource_group_name
+  container_app_environment_id = azurerm_container_app_environment.iris-container-app-environment.id
+  revision_mode                = "Single"
+  tags                         = local.common_tags
+  identity {
+    type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.container_app_identity.id]
+  }
+  registry {
+    server   = azurerm_container_registry.iris.login_server
+    identity = azurerm_user_assigned_identity.container_app_identity.id
+  }
+  template {
+    container {
+      name   = "frontend-function"
+      image  = "${azurerm_container_registry.iris.login_server}/${var.frontend_function_imagen_name}"
+      cpu    = 0.25
+      memory = "0.5Gi"
+    }
+    max_replicas = 1
+    min_replicas = 0
+  }
+  ingress {
+    target_port = 8501
     external_enabled = true
     traffic_weight {
       percentage = 100

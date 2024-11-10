@@ -21,5 +21,10 @@ variable "frontend_imagen_name" {
 
 variable "backend_function_imagen_name" {
   type        = string
+  description = "The backend imagen name"
+}
+
+variable "frontend_function_imagen_name" {
+  type        = string
   description = "The frontend imagen name"
 }

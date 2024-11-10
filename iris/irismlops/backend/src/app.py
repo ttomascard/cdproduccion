@@ -3,9 +3,10 @@ from keras.models import load_model
 from keras.models import model_from_json
 from flask import request
 import numpy as np
+
 app = Flask(__name__)
 model = None
- 
+ #lets change
 def load_trained_model():
     with open('price-house-v1.json') as json_file:
         load_model_json = json_file.read()
