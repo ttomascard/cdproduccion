@@ -194,6 +194,7 @@ terraform-apply-iris:
     - apt update -y && apt install -y terraform docker-ce-cli
     - terraform --version
     - cd iris/irismlops/iac/terraform
+    - terraform --version
     - terraform init
     - terraform workspace select $TERRAFORM_WORKSPACE
     - terraform apply -auto-approve
