@@ -219,8 +219,7 @@ deploy-function:
   image: ubuntu:24.04
   script:
     - apt-get update && apt-get install -y curl lsb-release gnupg apt-transport-https ca-certificates
-    - apt-get install -y python3 python3-pip  # Instalamos Python 3 y pip
-    - pip3 install streamlit
+    - apt-get update && apt-get install -y python3.10 python3.10-venv python3-pip
     - apt-get install -y nodejs
     - apt-get install -y npm
     - npm install -g azure-functions-core-tools@4 --unsafe-perm true
@@ -240,11 +239,19 @@ deploy-function:
     # Desplegamos la función en Azure
     - echo "Deploying to Azure App Service"
     - cd iris/irismlops/backend-fn
+    # Creamos el entorno virtual
+    - python3.10 -m venv .venv
+
+    # Activamos el entorno virtual
+    - source .venv/bin/activate
     - pip install -r requirements.txt
     - az functionapp list --query "[].name"
     - func azure functionapp publish "tomfunction" --python --force  # Publicamos la función en Azure
     # Volvemos al directorio inicial
     - cd ../frontend-fn
+    - python3.10 -m venv .venv
+    - source .venv/bin/activate
+    - pip install -r requirements.txt
     - streamlit run app.py
   
 
