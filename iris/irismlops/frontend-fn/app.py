@@ -3,7 +3,7 @@ import requests
 import os
 
 # Obtener la URL del servidor desde una variable de entorno
-server_url = os.getenv('PREDICTION_SERVER_URL', 'https://tomfunction.azurewebsites.net')
+server_url = os.getenv('PREDICTION_SERVER_URL', 'http://localhost:7071')
 
 # Definir el título de la aplicación
 st.title("Modelo de Predicción de Precio de Viviendas")
