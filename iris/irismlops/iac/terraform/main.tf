@@ -63,7 +63,7 @@ resource "docker_image" "backend_fn" {
     command = "docker push ${azurerm_container_registry.iris.login_server}/${var.backend_function_imagen_name}"
   }
 }
-#Hubo cambio
+#Hubo cambios
 resource "docker_image" "frontend_fn" {
   name = var.frontend_function_imagen_name
   build {
