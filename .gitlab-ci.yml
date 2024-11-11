@@ -223,7 +223,7 @@ deploy-function:
     - apt-get update
     - apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
     - apt-get update
-    # - apt-get install azure-cli -y
+    - apt-get install azure-cli -y
     - cd iris/irismlops/backend-fn
     - az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
     - apt-get install azure-functions-core-tools-4
