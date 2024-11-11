@@ -28,23 +28,25 @@ resource "azurerm_container_registry" "iris" {
   tags                = local.common_tags
 }
 
-# build the docker image
-resource "docker_image" "backend_image" {
-  name = var.backend_image_name
-  build {
-    context    = "../../"
-    dockerfile = "iac/docker/backend/Dockerfile"
-    tag        = ["${azurerm_container_registry.iris.login_server}/${var.backend_image_name}"]
-    platform = "linux/amd64"
-  }
-  provisioner "local-exec" {
-    command = "docker login ${azurerm_container_registry.iris.login_server} -u ${azurerm_container_registry.iris.admin_username} -p ${azurerm_container_registry.iris.admin_password}"
-  }
 
-  provisioner "local-exec" {
-    command = "docker push ${azurerm_container_registry.iris.login_server}/${var.backend_image_name}"
-  }
-}
+
+# # build the docker image
+# resource "docker_image" "backend_image" {
+#   name = var.backend_image_name
+#   build {
+#     context    = "../../"
+#     dockerfile = "iac/docker/backend/Dockerfile"
+#     tag        = ["${azurerm_container_registry.iris.login_server}/${var.backend_image_name}"]
+#     platform = "linux/amd64"
+#   }
+#   provisioner "local-exec" {
+#     command = "docker login ${azurerm_container_registry.iris.login_server} -u ${azurerm_container_registry.iris.admin_username} -p ${azurerm_container_registry.iris.admin_password}"
+#   }
+
+#   provisioner "local-exec" {
+#     command = "docker push ${azurerm_container_registry.iris.login_server}/${var.backend_image_name}"
+#   }
+# }
 
 resource "docker_image" "backend_fn" {
   name = var.backend_image_name
@@ -79,22 +81,22 @@ resource "docker_image" "frontend_fn" {
   }
 }
 
-resource "docker_image" "frontend_image" {
-  name = var.frontend_imagen_name
-  build {
-    context    = "../../"
-    dockerfile = "iac/docker/frontend/Dockerfile"
-    tag        = ["${azurerm_container_registry.iris.login_server}/${var.frontend_imagen_name}"]
-    platform = "linux/amd64"
-  }
-  provisioner "local-exec" {
-    command = "docker login ${azurerm_container_registry.iris.login_server} -u ${azurerm_container_registry.iris.admin_username} -p ${azurerm_container_registry.iris.admin_password}"
-  }
+# resource "docker_image" "frontend_image" {
+#   name = var.frontend_imagen_name
+#   build {
+#     context    = "../../"
+#     dockerfile = "iac/docker/frontend/Dockerfile"
+#     tag        = ["${azurerm_container_registry.iris.login_server}/${var.frontend_imagen_name}"]
+#     platform = "linux/amd64"
+#   }
+#   provisioner "local-exec" {
+#     command = "docker login ${azurerm_container_registry.iris.login_server} -u ${azurerm_container_registry.iris.admin_username} -p ${azurerm_container_registry.iris.admin_password}"
+#   }
 
-  provisioner "local-exec" {
-    command = "docker push ${azurerm_container_registry.iris.login_server}/${var.frontend_imagen_name}"
-  }
-}
+#   provisioner "local-exec" {
+#     command = "docker push ${azurerm_container_registry.iris.login_server}/${var.frontend_imagen_name}"
+#   }
+# }
 
 # create a container app Log Analytics Workspace
 resource "azurerm_log_analytics_workspace" "log-analytics-ws" {
@@ -281,3 +283,68 @@ resource "azurerm_container_app" "frontend_container_app" {
     }
   }
 }
+
+
+
+
+
+
+
+resource "azurerm_resource_group" "tomgrupo" {
+  name     = "tomgrupo"
+  location = "eastus"
+}
+
+resource "azurerm_app_service_plan" "tomplanserv" {
+  name                = "azure-functions-tom"
+  location            = azurerm_resource_group.tomgrupo.location
+  resource_group_name = azurerm_resource_group.tomgrupo.name
+  kind                = "Linux"
+  reserved            = true
+
+  sku {
+    tier = "Dynamic"
+    size = "Y1"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      kind
+    ]
+  }
+}
+
+
+
+resource "azurerm_storage_account" "tomlabstorage" {
+  name                     = "tomupbdsplaboratoriodev"
+  resource_group_name      = "dsproduccion202402"
+  location                 = "eastus"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  tags = {
+    environment = "dev"
+    owner = "tomas.cardona@upb.edu.co"
+    project = "tomas-ds-produccion"
+  }
+}
+
+
+
+resource "azurerm_windows_function_app" "tomfunction" {
+  name                = "tomfunction"
+  resource_group_name = azurerm_resource_group.tomgrupo.name
+  location            = azurerm_resource_group.tomgrupo.location
+
+  storage_account_name       = azurerm_storage_account.tomlabstorage.name
+  storage_account_access_key = azurerm_storage_account.tomlabstorage.primary_access_key
+  service_plan_id            = azurerm_app_service_plan.tomplanserv.id
+
+  site_config {}
+}
+
+
+
+
+
+
