@@ -198,34 +198,41 @@ resource "azurerm_container_app" "backend_function_container_app" {
   }
 }
 
-# Create the Azure Container App
-resource "azurerm_container_app" "frontend_function_container_app" {
+resource "azurerm_container_app" "frontend_container_app" {
   name                         = "${local.prefix}-${var.environment}-iris-fe-function-app"
   resource_group_name          = local.resource_group_name
   container_app_environment_id = azurerm_container_app_environment.iris-container-app-environment.id
   revision_mode                = "Single"
   tags                         = local.common_tags
+
   identity {
     type = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.container_app_identity.id]
   }
+
   registry {
     server   = azurerm_container_registry.iris.login_server
     identity = azurerm_user_assigned_identity.container_app_identity.id
   }
+
   template {
     container {
       name   = "frontend-function"
       image  = "${azurerm_container_registry.iris.login_server}/${var.frontend_function_imagen_name}"
       cpu    = 0.25
-      memory = "0.5Gi"
+      memory = "0.5Gi" 
+
+      env {
+        name  = "PREDICTION_SERVER_URL"
+        value = "https://${azurerm_container_app.backend_container_app.latest_revision_fqdn}" # Apunta al backend
+      }
     }
     max_replicas = 1
-    min_replicas = 0
   }
   ingress {
     target_port = 8501
     external_enabled = true
+
     traffic_weight {
       percentage = 100
       latest_revision = true
