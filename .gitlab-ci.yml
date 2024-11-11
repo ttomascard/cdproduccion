@@ -251,6 +251,7 @@ deploy-function:
     - source .venv/bin/activate
     - pip install -r requirements.txt
     - az functionapp list --query "[].name"
+    - az functionapp config set --name tomfunction --resource-group <resource_group> --linux-fx-version "PYTHON|3.10"
     - func azure functionapp publish "tomfunction" --python --force  # Publicamos la función en Azure
     # Volvemos al directorio inicial
     - cd ../frontend-fn
