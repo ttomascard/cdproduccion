@@ -63,7 +63,7 @@ resource "docker_image" "backend_fn" {
     command = "docker push ${azurerm_container_registry.iris.login_server}/${var.backend_function_imagen_name}"
   }
 }
-#Hubo cambios
+#Hubo cambios y muchos
 resource "docker_image" "frontend_fn" {
   name = var.frontend_function_imagen_name
   build {
@@ -165,6 +165,7 @@ resource "azurerm_container_app" "backend_container_app" {
     }
   }
 }
+
 # Create the Azure Container App
 resource "azurerm_container_app" "backend_function_container_app" {
   name                         = "${local.prefix}-${var.environment}-iris-be-function-app"
@@ -226,7 +227,7 @@ resource "azurerm_container_app" "frontend_function_container_app" {
 
       env {
         name  = "PREDICTION_SERVER_URL"
-        value = "https://${azurerm_container_app.backend_container_app.latest_revision_fqdn}" # Apunta al backend
+        value = "https://${azurerm_container_app.backend_function_container_app.latest_revision_fqdn}" # Apunta al backend
       }
     }
     max_replicas = 1
