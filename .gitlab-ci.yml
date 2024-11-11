@@ -218,7 +218,7 @@ deploy-function:
   stage: deploy
   image: mcr.microsoft.com/azure-cli
   script:
-    - curl -sL https://aka.ms/InstallAzureFunctionCoreTools | bash
+    - curl -sL https://aka.ms/InstallAzureFunctionCoreTools
     - echo "Logging into Azure"
     - az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
     - echo "Deploying to Azure App Service"
