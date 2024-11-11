@@ -221,7 +221,7 @@ deploy-function:
     - apt-get update && apt-get install -y curl lsb-release gnupg
     - curl -sL https://aka.ms/InstallAzureCLIDeb
     - apt-get update
-    - apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
+    - apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
     - apt-get update
     - apt-get install azure-cli
     - cd iris/irismlops/backend-fn
