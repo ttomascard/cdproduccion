@@ -163,6 +163,7 @@ terraform-build-iris:
     - apt update -y && apt install -y terraform
     - terraform --version
     - cd iris/irismlops/iac/terraform
+    - terraform --version
     - terraform init
     - terraform plan -out=${CI_PROJECT_DIR}/plan.json
     - terraform show --json ${CI_PROJECT_DIR}/plan.json
