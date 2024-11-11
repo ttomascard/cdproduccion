@@ -49,6 +49,6 @@ if st.button('Predecir'):
             prediction = response.json()
             st.success(f"El valor predicho para la vivienda es: {prediction}")
         else:
-            st.error(f"Error en la predicción: {response.status_code}")
+            st.error(f"Errosr en la predicción: {response.status_code}")
     except Exception as e:
         st.error(f"No se pudo conectar con el endpoint. Error: {e}")
