@@ -50,5 +50,6 @@ if st.button('Predecir'):
             st.success(f"El valor predicho para la vivienda es: {prediction['predicted_price']}")  
         else:
             st.error(f"Error en la predicción: {response.status_code}")
+            st.error(f'{server_url}/api/predict')
     except Exception as e:
         st.error(f"No se pudo conectar con el endpoint. Error: {e}")
