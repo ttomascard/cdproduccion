@@ -221,7 +221,7 @@ deploy-function:
     - echo "Logging into Azure"
     - cd iris/irismlops/backend-fn
     - az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
-    - curl -sL https://aka.ms/InstallAzureFunctionsCoreTools | bash
+    - curl -sL https://aka.ms/InstallAzureFunctionsCoreTools
     - echo "Deploying to Azure App Service"
     - func azure functionapp publish "tomfunction" --python --force  # Publicamos la función en Azure
     - cd ../../
