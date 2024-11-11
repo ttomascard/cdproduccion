@@ -218,9 +218,10 @@ deploy-function:
   stage: deploy
   image: mcr.microsoft.com/azure-cli
   script:
-    - apt-get update
-    - apt-get install azure-functions-core-tools-4
-    - echo "Logging into Azure"
+    - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+    - apt-get install curl && curl -sL https://deb.nodesource.com/setup_12.x | bash -
+    - apt-get install nodejs
+    - npm install -g azure-functions-core-tools@3 --unsafe-perm true
     - az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
     - echo "Deploying to Azure App Service"
     - func azure functionapp publish "tomfunction" --powershell --prefix src/ --force
