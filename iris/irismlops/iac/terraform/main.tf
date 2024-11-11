@@ -290,15 +290,11 @@ resource "azurerm_container_app" "frontend_container_app" {
 
 
 
-resource "azurerm_resource_group" "tomgrupo" {
-  name     = "tomgrupo"
-  location = "eastus"
-}
 
 resource "azurerm_service_plan" "tomplanserv" {
   name                = "tomplanserv"
-  resource_group_name = azurerm_resource_group.tomgrupo.name
-  location            = azurerm_resource_group.tomgrupo.location
+  resource_group_name = local.resource_group_name
+  location            = var.location
   os_type             = "Linux"
   sku_name            = "B1"
 }
@@ -321,8 +317,8 @@ resource "azurerm_storage_account" "tomlabstorage" {
 
 resource "azurerm_linux_function_app" "tomfunction" {
   name                = "tomfunction"
-  resource_group_name = azurerm_resource_group.tomgrupo.name
-  location            = azurerm_resource_group.tomgrupo.location
+  resource_group_name = local.resource_group_name
+  location            = var.location
 
   storage_account_name       = azurerm_storage_account.tomlabstorage.name
   storage_account_access_key = azurerm_storage_account.tomlabstorage.primary_access_key

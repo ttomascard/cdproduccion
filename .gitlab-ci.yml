@@ -238,6 +238,7 @@ deploy-function:
     # Desplegamos la función en Azure
     - echo "Deploying to Azure App Service"
     - cd iris/irismlops/backend-fn
+    - az functionapp list --query "[].name"
     - func azure functionapp publish "tomfunction" --python --force  # Publicamos la función en Azure
     # Volvemos al directorio inicial
     - cd ../../
