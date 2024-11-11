@@ -291,40 +291,40 @@ resource "azurerm_container_app" "frontend_container_app" {
 
 
 
-resource "azurerm_service_plan" "tomplanserv" {
-  name                = "tomplanserv"
-  resource_group_name = local.resource_group_name
-  location            = var.location
-  os_type             = "Linux"
-  sku_name            = "B1"
-}
+# resource "azurerm_service_plan" "tomplanserv" {
+#   name                = "tomplanserv"
+#   resource_group_name = local.resource_group_name
+#   location            = var.location
+#   os_type             = "Linux"
+#   sku_name            = "B1"
+# }
 
 
-resource "azurerm_storage_account" "tomlabstorage" {
-  name                     = "tomupbdsplaboratoriodev"
-  resource_group_name      = "dsproduccion202402"
-  location                 = "eastus"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  tags = {
-    environment = "dev"
-    owner = "tomas.cardona@upb.edu.co"
-    project = "tomas-ds-produccion"
-  }
-}
+# resource "azurerm_storage_account" "tomlabstorage" {
+#   name                     = "tomupbdsplaboratoriodev"
+#   resource_group_name      = "dsproduccion202402"
+#   location                 = "eastus"
+#   account_tier             = "Standard"
+#   account_replication_type = "LRS"
+#   tags = {
+#     environment = "dev"
+#     owner = "tomas.cardona@upb.edu.co"
+#     project = "tomas-ds-produccion"
+#   }
+# }
 
 
 
-resource "azurerm_linux_function_app" "tomfunction" {
-  name                = "tomfunction"
-  resource_group_name = local.resource_group_name
-  location            = var.location
+# resource "azurerm_linux_function_app" "tomfunction" {
+#   name                = "tomfunction"
+#   resource_group_name = local.resource_group_name
+#   location            = var.location
 
-  storage_account_name       = azurerm_storage_account.tomlabstorage.name
-  storage_account_access_key = azurerm_storage_account.tomlabstorage.primary_access_key
-  service_plan_id            = azurerm_service_plan.tomplanserv.id
-  site_config {}
-}
+#   storage_account_name       = azurerm_storage_account.tomlabstorage.name
+#   storage_account_access_key = azurerm_storage_account.tomlabstorage.primary_access_key
+#   service_plan_id            = azurerm_service_plan.tomplanserv.id
+#   site_config {}
+# }
 
 
 

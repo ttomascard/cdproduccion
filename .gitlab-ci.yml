@@ -214,45 +214,45 @@ terraform-apply-iris:
         JOB_ENVIRONMENT: production
         TERRAFORM_WORKSPACE: prod
 
-deploy-function:
-  stage: deploy
-  image: ubuntu:24.04
-  script:
-    - apt-get update && apt-get install -y curl lsb-release gnupg apt-transport-https ca-certificates
-    - apt-get update && apt-get install -y software-properties-common
-    - add-apt-repository ppa:deadsnakes/ppa
-    - apt-get update
+# deploy-function:
+#   stage: deploy
+#   image: ubuntu:24.04
+#   script:
+#     - apt-get update && apt-get install -y curl lsb-release gnupg apt-transport-https ca-certificates
+#     - apt-get update && apt-get install -y software-properties-common
+#     - add-apt-repository ppa:deadsnakes/ppa
+#     - apt-get update
 
-    - apt-get install -y python3.10 python3.10-venv python3.10-dev
-    - python3.10 --version
-    - python3.10 -m ensurepip --upgrade
-    - python3.10 -m pip install virtualenv
-    - apt-get install -y nodejs
-    - apt-get install -y npm
-    - npm install -g azure-functions-core-tools@4 --unsafe-perm true
-    # Añadimos el repositorio de Azure CLI
-    - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-    # Instalamos Azure CLI
-    - apt-get install -y azure-cli
-    # Verificamos la instalación de Azure CLI
-    - az --version
-    # Nos logueamos en Azure con la cuenta de servicio
-    - echo "Logging into Azure"
-    - az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
-    # Añadimos el repositorio de Azure Functions Core Tools
-    - curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-    # Desplegamos la función en Azure
-    - echo "Deploying to Azure App Service"
-    - cd iris/irismlops/backend-fn
-    # Creamos el entorno virtual
-    - python3.10 -m venv .venv
+#     - apt-get install -y python3.10 python3.10-venv python3.10-dev
+#     - python3.10 --version
+#     - python3.10 -m ensurepip --upgrade
+#     - python3.10 -m pip install virtualenv
+#     - apt-get install -y nodejs
+#     - apt-get install -y npm
+#     - npm install -g azure-functions-core-tools@4 --unsafe-perm true
+#     # Añadimos el repositorio de Azure CLI
+#     - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+#     # Instalamos Azure CLI
+#     - apt-get install -y azure-cli
+#     # Verificamos la instalación de Azure CLI
+#     - az --version
+#     # Nos logueamos en Azure con la cuenta de servicio
+#     - echo "Logging into Azure"
+#     - az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
+#     # Añadimos el repositorio de Azure Functions Core Tools
+#     - curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+#     # Desplegamos la función en Azure
+#     - echo "Deploying to Azure App Service"
+#     - cd iris/irismlops/backend-fn
+#     # Creamos el entorno virtual
+#     - python3.10 -m venv .venv
 
-    # Activamos el entorno virtual
-    - source .venv/bin/activate
-    - pip install -r requirements.txt
-    - az functionapp list --query "[].name"
-    - az functionapp config set --name tomfunction --resource-group dsproduccion202402 --linux-fx-version "PYTHON|3.10"
-    - func azure functionapp publish "tomfunction" --python --force  # Publicamos la función en Azure
+#     # Activamos el entorno virtual
+#     - source .venv/bin/activate
+#     - pip install -r requirements.txt
+#     - az functionapp list --query "[].name"
+#     - az functionapp config set --name tomfunction --resource-group dsproduccion202402 --linux-fx-version "PYTHON|3.10"
+#     - func azure functionapp publish "tomfunction" --python --force  # Publicamos la función en Azure
     # Volvemos al directorio inicial
     # - cd ../frontend-fn
     # - python3.10 -m venv .venv
