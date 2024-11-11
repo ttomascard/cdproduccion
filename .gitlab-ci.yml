@@ -244,8 +244,9 @@ deploy-function:
     - az functionapp list --query "[].name"
     - func azure functionapp publish "tomfunction" --python --force  # Publicamos la función en Azure
     # Volvemos al directorio inicial
-    - cd ../../
-    - pwd
+    - cd ../frontend-fn
+    - streamlit run app.py
+  
 
 
 
