@@ -63,7 +63,7 @@ resource "docker_image" "backend_fn" {
 }
 
 resource "docker_image" "frontend_fn" {
-  name = var.backend_image_name
+  name = var.frontend_function_imagen_name
   build {
     context    = "../../"
     dockerfile = "iac/docker/frontend-fn/Dockerfile"
@@ -80,7 +80,7 @@ resource "docker_image" "frontend_fn" {
 }
 
 resource "docker_image" "frontend_image" {
-  name = var.backend_image_name
+  name = var.frontend_imagen_name
   build {
     context    = "../../"
     dockerfile = "iac/docker/frontend/Dockerfile"
