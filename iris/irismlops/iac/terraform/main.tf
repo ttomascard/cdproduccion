@@ -198,7 +198,7 @@ resource "azurerm_container_app" "backend_function_container_app" {
   }
 }
 
-resource "azurerm_container_app" "frontend_container_app" {
+resource "azurerm_container_app" "frontend_function_container_app" {
   name                         = "${local.prefix}-${var.environment}-iris-fe-function-app"
   resource_group_name          = local.resource_group_name
   container_app_environment_id = azurerm_container_app_environment.iris-container-app-environment.id
