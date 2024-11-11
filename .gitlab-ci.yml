@@ -223,7 +223,7 @@ deploy-function:
     - add-apt-repository ppa:deadsnakes/ppa
     - apt-get update
 
-    - apt-get install -y python3.10 python3.10-venv python3.10-dev
+    - apt-get install python3.10=3.10.12-1+focal1 python3.10-venv python3.10-dev
     - python3.10 -m ensurepip --upgrade
     - python3.10 -m pip install virtualenv
     - apt-get install -y nodejs
