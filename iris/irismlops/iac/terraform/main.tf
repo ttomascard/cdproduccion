@@ -295,25 +295,13 @@ resource "azurerm_resource_group" "tomgrupo" {
   location = "eastus"
 }
 
-resource "azurerm_app_service_plan" "tomplanserv" {
-  name                = "azure-functions-tom"
-  location            = azurerm_resource_group.tomgrupo.location
+resource "azurerm_service_plan" "tomplanserv" {
+  name                = "tomplanserv"
   resource_group_name = azurerm_resource_group.tomgrupo.name
-  kind                = "Linux"
-  reserved            = true
-
-  sku {
-    tier = "Dynamic"
-    size = "Y1"
-  }
-
-  lifecycle {
-    ignore_changes = [
-      kind
-    ]
-  }
+  location            = azurerm_resource_group.tomgrupo.location
+  os_type             = "Linux"
+  sku_name            = "B1"
 }
-
 
 
 resource "azurerm_storage_account" "tomlabstorage" {
@@ -338,8 +326,7 @@ resource "azurerm_windows_function_app" "tomfunction" {
 
   storage_account_name       = azurerm_storage_account.tomlabstorage.name
   storage_account_access_key = azurerm_storage_account.tomlabstorage.primary_access_key
-  service_plan_id            = azurerm_app_service_plan.tomplanserv.id
-
+  service_plan_id            = azurerm_service_plan.tomplanserv.id
   site_config {}
 }
 
