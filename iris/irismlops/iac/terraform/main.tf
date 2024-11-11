@@ -319,7 +319,7 @@ resource "azurerm_storage_account" "tomlabstorage" {
 
 
 
-resource "azurerm_windows_function_app" "tomfunction" {
+resource "azurerm_linux_function_app" "tomfunction" {
   name                = "tomfunction"
   resource_group_name = azurerm_resource_group.tomgrupo.name
   location            = azurerm_resource_group.tomgrupo.location
