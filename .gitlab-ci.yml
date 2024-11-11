@@ -218,8 +218,12 @@ deploy-function:
   stage: deploy
   image: ubuntu:24.04
   script:
-    # Actualizamos el sistema e instalamos dependencias necesarias
-    - apt-get update && apt-get install -y curl lsb-release gnupg apt-transport-https ca-certificates sudo
+    - apt-get update && apt-get install -y curl lsb-release gnupg apt-transport-https ca-certificates
+    - apt-get install -y nodejs
+    - apt-get install -y npm
+
+    - npm install -g azure-functions-core-tools@4 --unsafe-perm true
+
     # Añadimos el repositorio de Azure CLI
     - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
     - apt-get update
@@ -230,14 +234,10 @@ deploy-function:
     # Nos logueamos en Azure con la cuenta de servicio
     - echo "Logging into Azure"
     - az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
-    # Añadimos el repositorio para Azure Functions Core Tools 4.x
+    # Añadimos el repositorio de Azure Functions Core Tools
     - curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-    - echo "deb [arch=amd64] https://packages.microsoft.com/azure-functions-core-tools/debian stable main" | tee /etc/apt/sources.list.d/azure-functions.list
     - apt-get update
-    # Instalamos Azure Functions Core Tools
     - apt-get install -y azure-functions-core-tools-4
-    # Verificamos la instalación de Azure Functions Core Tools
-    - func --version
     # Desplegamos la función en Azure
     - echo "Deploying to Azure App Service"
     - cd iris/irismlops/backend-fn
