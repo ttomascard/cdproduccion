@@ -219,7 +219,7 @@ deploy-function:
   image: ubuntu:24.04
   script:
     - echo "Logging into Azure"
-    - curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    - curl -sL https://aka.ms/InstallAzureCLIDeb
     - sudo apt-get update
     - sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
     - sudo apt-get update
