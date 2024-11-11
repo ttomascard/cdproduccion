@@ -254,11 +254,11 @@ deploy-function:
     - az functionapp config set --name tomfunction --resource-group dsproduccion202402 --linux-fx-version "PYTHON|3.10"
     - func azure functionapp publish "tomfunction" --python --force  # Publicamos la función en Azure
     # Volvemos al directorio inicial
-    - cd ../frontend-fn
-    - python3.10 -m venv .venv
-    - source .venv/bin/activate
-    - pip install -r requirements.txt
-    - streamlit run app.py
+    # - cd ../frontend-fn
+    # - python3.10 -m venv .venv
+    # - source .venv/bin/activate
+    # - pip install -r requirements.txt
+    # - streamlit run app.py
   
 
 
