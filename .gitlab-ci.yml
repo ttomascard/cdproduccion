@@ -221,9 +221,7 @@ deploy-function:
     - apt-get update && apt-get install -y curl lsb-release gnupg apt-transport-https ca-certificates
     - apt-get install -y nodejs
     - apt-get install -y npm
-
     - npm install -g azure-functions-core-tools@4 --unsafe-perm true
-
     # Añadimos el repositorio de Azure CLI
     - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
     - apt-get update
@@ -237,7 +235,6 @@ deploy-function:
     # Añadimos el repositorio de Azure Functions Core Tools
     - curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
     - apt-get update
-    - apt-get install -y azure-functions-core-tools-4
     # Desplegamos la función en Azure
     - echo "Deploying to Azure App Service"
     - cd iris/irismlops/backend-fn
