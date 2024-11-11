@@ -219,7 +219,11 @@ deploy-function:
   image: ubuntu:24.04
   script:
     - apt-get update && apt-get install -y curl lsb-release gnupg apt-transport-https ca-certificates
-    - apt-get update && apt-get install -y python3.10 python3-pip
+    - apt-get update && apt-get install -y software-properties-common
+    - add-apt-repository ppa:deadsnakes/ppa
+    - apt-get update
+
+    - apt-get install -y python3.10 python3.10-venv python3.10-dev
     - python3.10 -m ensurepip --upgrade
     - python3.10 -m pip install virtualenv
     - apt-get install -y nodejs
@@ -227,7 +231,6 @@ deploy-function:
     - npm install -g azure-functions-core-tools@4 --unsafe-perm true
     # Añadimos el repositorio de Azure CLI
     - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-    - apt-get update
     # Instalamos Azure CLI
     - apt-get install -y azure-cli
     # Verificamos la instalación de Azure CLI
@@ -237,7 +240,6 @@ deploy-function:
     - az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
     # Añadimos el repositorio de Azure Functions Core Tools
     - curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-    - apt-get update
     # Desplegamos la función en Azure
     - echo "Deploying to Azure App Service"
     - cd iris/irismlops/backend-fn
