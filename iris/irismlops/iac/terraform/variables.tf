@@ -28,3 +28,10 @@ variable "frontend_function_imagen_name" {
   type        = string
   description = "The frontend imagen name"
 }
+
+variable "function_app_name" {
+  type        = string
+  description = "function app name."
+}
+
+
