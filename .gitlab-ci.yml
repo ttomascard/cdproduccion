@@ -218,7 +218,7 @@ deploy-function:
   stage: deploy
   image: ubuntu:24.04
   script:
-    - echo "Logging into Azure"
+    - apt-get update && apt-get install -y curl lsb-release gnupg
     - curl -sL https://aka.ms/InstallAzureCLIDeb
     - sudo apt-get update
     - sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
@@ -227,7 +227,6 @@ deploy-function:
     - cd iris/irismlops/backend-fn
     - az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
     - apt-get install azure-functions-core-tools-4
-    - echo "Deploying to Azure App Service"
     - func azure functionapp publish "tomfunction" --python --force  # Publicamos la función en Azure
     - cd ../../
     - pwd
